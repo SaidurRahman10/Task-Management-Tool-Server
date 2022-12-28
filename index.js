@@ -21,7 +21,13 @@ const taskCollection = client.db('allTask').collection('task')
 
 app.get('/alltask', async(req,res)=>{
 
-    const query = {};
+    const query = {isComplete:false};
+    const task = await taskCollection.find(query).toArray();
+    res.send(task);
+})
+app.get('/allCompletedTask', async(req,res)=>{
+
+    const query = {isComplete:true};
     const task = await taskCollection.find(query).toArray();
     res.send(task);
 })
@@ -51,7 +57,26 @@ app.put('/alltask/:id', async(req,res)=>{
     const updatedTask = {
         $set:{
             name: task.name,
-            description: task.description
+            description: task.description,
+            date:task.date,
+           
+
+        }
+    }
+    const result = await taskCollection.updateOne(query, updatedTask, option)
+    res.send(result)
+    // console.log(updatedTask);
+})
+
+app.put('/alltaskComplete/:id', async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id: ObjectId(id)};
+    const task = req.body;
+    const option = {upsert:true}
+    const updatedTask = {
+        $set:{
+            isComplete:task.isComplete
+           
 
         }
     }
