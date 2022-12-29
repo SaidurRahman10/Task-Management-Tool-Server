@@ -17,6 +17,37 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const taskCollection = client.db('allTask').collection('task')
+const commentCollection = client.db('allTask').collection('comment')
+
+
+app.get('/allComment', async(req,res)=>{
+
+    const query = {};
+    const comment = await commentCollection.find(query).toArray();
+    res.send(comment);
+})
+app.get('/allComment/:id', async(req,res)=>{
+    const id = req.params.id;
+    const query = { _id: ObjectId(id)};
+    const comment = await commentCollection.findOne(query);
+    res.send(comment)
+   })
+
+
+
+   
+app.post('/allComment', async(req,res) =>{
+    const comment = req.body;
+    const result = await commentCollection.insertOne(comment);
+    res.send(result);
+})
+
+
+
+
+
+
+
 
 
 app.get('/alltask', async(req,res)=>{
